@@ -43,7 +43,7 @@ const app = {
         return await r.json()
     },
     loadSongs: async function () {
-        const localSongs = JSON.parse(this.config.songs)
+        const localSongs = JSON.parse(this.config.songs || null)
         this.songs = localSongs || await this.getSongs();
     },
     render: function () {
@@ -275,9 +275,18 @@ const app = {
                     Validator.isURL('#path'),
                     Validator.isURL('#image'),
                 ],
-                onSubmit: function (data) {
+                onSubmit: function (song) {
                     // Call API
-                    console.log(data);
+                    console.log(song);
+                    const isAdd = modalContainer.classList.contains('add');
+
+                    if (isAdd) {
+                        _this.addSong(song, contextItemAdd.dataset.index);
+                    } else {
+                        _this.updateSong(song, contextItemAdd.dataset.index);
+                    }
+
+                    _this.closeModal();
                 }
             });
         });
@@ -326,39 +335,39 @@ const app = {
         }
 
         // Xử lý khi submit click add/update song
-        modalSubmit.onclick = function (e) {
-            const isAdd = modalContainer.classList.contains('add');
-            const song = {
-                name: document.getElementsByName("name")[0].value,
-                singer: document.getElementsByName("singer")[0].value,
-                path: document.getElementsByName("path")[0].value,
-                image: document.getElementsByName("image")[0].value,
-            }
+        // modalSubmit.onclick = function (e) {
+        //     const isAdd = modalContainer.classList.contains('add');
+        //     const song = {
+        //         name: document.getElementsByName("name")[0].value,
+        //         singer: document.getElementsByName("singer")[0].value,
+        //         path: document.getElementsByName("path")[0].value,
+        //         image: document.getElementsByName("image")[0].value,
+        //     }
 
-            // Validate the song inputed
-            // let isValid = true;
-            // for (const key in song) {
-            //     if (song[key] === "") {
-            //         document.getElementsByName(key)[0].focus();
-            //         inValidForm.removeAttribute("hidden");
-            //         inValidForm.innerHTML = `
-            //             <p>Please provide a value for the song's 
-            //             <strong>${key}</strong></p>`;
-            //         isValid = false;
-            //         break;
-            //     }
-            //     inValidForm.innerHTML = "";
-            // }
+        //     // Validate the song inputed
+        //     let isValid = true;
+        //     for (const key in song) {
+        //         if (song[key] === "") {
+        //             document.getElementsByName(key)[0].focus();
+        //             inValidForm.removeAttribute("hidden");
+        //             inValidForm.innerHTML = `
+        //                 <p>Please provide a value for the song's 
+        //                 <strong>${key}</strong></p>`;
+        //             isValid = false;
+        //             break;
+        //         }
+        //         inValidForm.innerHTML = "";
+        //     }
 
-            // if (!isValid) return;
-            if (isAdd) {
-                _this.addSong(song, contextItemAdd.dataset.index);
-            } else {
-                _this.updateSong(song, contextItemAdd.dataset.index);
-            }
+        //     if (!isValid) return;
+        //     if (isAdd) {
+        //         _this.addSong(song, contextItemAdd.dataset.index);
+        //     } else {
+        //         _this.updateSong(song, contextItemAdd.dataset.index);
+        //     }
 
-            _this.closeModal();
-        }
+        //     _this.closeModal();
+        // }
 
         // Xử lý click close modal button
         $('.modal-header .close').onclick = function () {
